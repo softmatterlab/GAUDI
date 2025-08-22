@@ -3,7 +3,7 @@ By Mirja Granfors, Jesús Pineda, Blanca Zufiria Gerbolés, Joana B. Pereira, Ca
 
 GAUDI is an unsupervised geometric deep learning framework for analyzing complex graph-structured data. GAUDI's hourglass architecture, with multiple hierarchical pooling and upsampling steps, maps graphs into a structured latent space, capturing their underlying parameters.
 
-This repository contains an implementation of GAUDI, introduced in [Global graph features unveiled by unsupervised geometric deep learning](https://arxiv.org/abs/2503.05560).
+This repository contains an implementation of GAUDI, introduced in [Global graph features unveiled by unsupervised geometric deep learning](https://arxiv.org/abs/2503.05560v2).
 
 ## Getting started
 
