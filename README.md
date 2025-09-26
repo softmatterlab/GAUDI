@@ -11,6 +11,8 @@ An example of how GAUDI is trained on Watts-Strogatz small-world graphs can be f
 
 [Training GAUDI on Watts-Strogatz Small-World Graphs](GAUDI_Watts_Strogatz.ipynb)
 
+Running the example takes about **5 minutes** on a standard laptop.
+
 ## Dependencies
 
 To use this implementation, ensure you have the following dependencies installed:
