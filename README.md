@@ -15,8 +15,8 @@ An example of how GAUDI is trained on Watts-Strogatz small-world graphs can be f
 
 To use this implementation, ensure you have the following dependencies installed:
 
-- `deeplay`
-- `torch`
+- `deeplay` (tested with `0.1.3`)
+- `torch` (tested with `2.6.0` and `2.7.0`)
 
 You can install them using:
 
@@ -27,3 +27,22 @@ pip install deeplay
 pip install torch
 ```
 
+
+### Additional dependencies for the example 
+
+If you also want to run the provided Watts-Strogatz example, you’ll need these extra packages:
+- `PyGSP` (tested with `0.5.1`)
+- `networkx` (tested with `3.4.2`)
+- `torch-geometric`(tested with `2.5.2, 2.6.1`)
+
+You can install them using:
+
+```bash
+pip install PyGSP
+```
+```bash
+pip install networkx
+```
+```bash
+pip install torch-geometric
+```
