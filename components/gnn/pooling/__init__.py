@@ -1,4 +1,2 @@
-from .scc import SelectClusterConnect
-from .ugp import UniformGraphPooling
-from .mcp import MinCutPooling
-from .gnu import GraphNodeUpsampling
+from .mincut import MinCutPooling, MinCutUpsampling
+from .globalpool import GlobalGraphPooling, GlobalGraphUpsampling

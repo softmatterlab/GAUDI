@@ -1,1 +1,1 @@
-from .gcncat import GraphConvolutionalNeuralNetworkConcat
+from .gcn_concat import GraphConvolutionalNeuralNetworkConcat

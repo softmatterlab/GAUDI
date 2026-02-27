@@ -1,1 +1,1 @@
-from .gnn import *
+from .graphencdec import GraphEncoderBlock, GraphDecoderBlock, GraphEncoder, GraphDecoder

@@ -1,4 +1,3 @@
-from .mpnsender import MessagePassingNeuralNetworkSender
+from .mpn_gaudi import MessagePassingNeuralNetworkGAUDI
 
-from .edgex import EdgeExtraction
-from .transformation import TransformSender
+from .transformation import *
