@@ -1,7 +1,8 @@
-from typing import Optional, Callable
+from typing import Optional, Sequence, Callable, List
 
+from deeplay.components import ConvolutionalEncoder2d, ConvolutionalDecoder2d
 from deeplay.applications import Application
-from deeplay.external import Optimizer, Adam
+from deeplay.external import External, Optimizer, Adam
 
 from deeplay import (
     DeeplayModule,
@@ -30,17 +31,13 @@ class VariationalGraphAutoEncoder(Application):
     gamma: float
         Weighting for the edge feature reconstruction loss. Defaults to 1
     delta: float
-        Weighting for the pooling loss. Defaults to 1
+        Weighting for the MinCut loss. Defaults to 1
     reconstruction_loss: Reconstruction loss
-        Loss metric for the reconstruction of the node and edge features.
-        Defaults to L1 (Mean absolute error).
-    pool_loss_terms: dict
-        Dictionary containing the pool loss terms to be used. Defaults to
-        ['L_cut', 'L_ortho'] corresponding to the MinCut cut loss and
-        orthongonality loss.
+        Loss metric for the reconstruction of the node and edge features. Defaults to L1 (Mean absolute error).
     optimizer: Optimizer
         Optimizer to use for training.
     """
+    
     encoder: torch.nn.Module
     decoder: torch.nn.Module
     hidden_features: int
@@ -50,7 +47,6 @@ class VariationalGraphAutoEncoder(Application):
     gamma: float
     delta: float
     reconstruction_loss: torch.nn.Module
-    pool_loss_terms: dict
     optimizer: Optimizer
 
     def __init__(
@@ -64,8 +60,7 @@ class VariationalGraphAutoEncoder(Application):
         gamma: Optional[float] = 1,
         delta: Optional[float] = 1,
         reconstruction_loss: Optional[Callable] = nn.L1Loss(),
-        pool_loss_terms: Optional[dict] = ['L_cut', 'L_ortho'],
-        optimizer: Optional[Optimizer] = None,
+        optimizer=None,
         **kwargs,
     ):
         self.encoder = encoder
@@ -90,7 +85,6 @@ class VariationalGraphAutoEncoder(Application):
         self.beta = beta                                               
         self.gamma = gamma
         self.delta = delta
-        self.pool_loss_terms = pool_loss_terms
 
         super().__init__(**kwargs)
 
@@ -130,35 +124,16 @@ class VariationalGraphAutoEncoder(Application):
         edge_features_hat = x['edge_attr']
         mu = x['mu']
         log_var = x['log_var']
+        mincut_cut_loss = sum(value for key, value in x.items() if key.startswith('L_cut'))
+        mincut_ortho_loss = sum(value for key, value in x.items() if key.startswith('L_ortho'))
+        rec_loss_nodes, rec_loss_edges, KLD = self.compute_loss(node_features_hat, node_features, edge_features_hat, edge_features, mu, log_var)
 
-        pool_loss = 0
-        loss_details = {}
-        for term in self.pool_loss_terms:
-            term_loss = sum(
-                value for key, value in x.items() if key.startswith(term)
-            )
-            loss_details[f'{term} loss'] = term_loss
-            pool_loss += term_loss
+        tot_loss = self.alpha * rec_loss_nodes + self.gamma * rec_loss_edges + self.beta * KLD + self.delta * (mincut_cut_loss + mincut_ortho_loss)
 
-        rec_loss_nodes, rec_loss_edges, KLD = self.compute_loss(
-            node_features_hat,
-            node_features,
-            edge_features_hat,
-            edge_features,
-            mu,
-            log_var
-        )
-
-        tot_loss = (self.alpha * rec_loss_nodes + self.gamma * rec_loss_edges 
-                    + self.beta * KLD + self.delta * pool_loss)
-
-        loss_details.update({
-            "rec_loss_nodes": rec_loss_nodes,
-            "rec_loss_edges": rec_loss_edges,
-            "KL": KLD,
-            "total_loss": tot_loss
-        })
-        for name, v in loss_details.items():
+        loss = {"rec_loss_nodes": rec_loss_nodes, "rec_loss_edges": rec_loss_edges, "KL": KLD,
+                "MinCut cut loss": mincut_cut_loss, "MinCut orthogonality loss": mincut_ortho_loss, 
+                "total_loss": tot_loss}
+        for name, v in loss.items():
             self.log(
                 f"train_{name}",
                 v,
