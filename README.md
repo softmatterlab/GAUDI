@@ -5,6 +5,8 @@ GAUDI is an unsupervised geometric deep learning framework for analyzing complex
 
 This repository contains an implementation of GAUDI, introduced in [Global graph features unveiled by unsupervised deep learning](http://iopscience.iop.org/article/10.1088/2632-2153/ae8d7f).
 
+The `data` folder contains the Single-Molecule Localization Microscopy (SMLM) simulations and the script used to generate the Vicsek model simulations.
+
 ## Getting started
 
 An example of how GAUDI is trained on Watts-Strogatz small-world graphs can be found here:
